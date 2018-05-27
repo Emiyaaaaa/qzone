@@ -5,7 +5,7 @@
 import pymysql
 import re
 
-maxinfo = 30
+maxinfo = 60
 
 class deal_sql(object):
 
@@ -70,7 +70,7 @@ class deal_sql(object):
 
             img_p = ['图', 'p', 'P']
             num = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '一', '二', '三', '四', '五', '六', '七', '八', '九']
-            to = ['-', '—', '到', '至', ',', '，', '、', '~']
+            to = ['-', '—', '到', '至', ',', '，', '、', '~','.',' ']
             and_ = [',', '.', '，', ' ']
             men = ['个','名','位']
 
@@ -80,81 +80,101 @@ class deal_sql(object):
 
             if txt_one != '\n' and txt_one != '</pre>':
                 for img in img_p:
-                    if img in txt_one[:3]: # 前三个字中有 img_p
+                    if img in txt_one: # if img in txt_one[:3]:  前三个字中有 img_p
                         img_p_num = txt_one.index(img) # img_p_num 为 img_p 的索引
                         if len(txt_one) > img_p_num+1: # 确保 img_p 不在最后一个字的位置
                             if txt_one[img_p_num+1] in num:
                                 img_num_1 = num.index(txt_one[img_p_num+1])+1
                                 if img_num_1 > 9:
                                     img_num_1 = img_num_1 - 9
+                                if len(txt_one) > img_p_num+3:
+                                    if txt_one[img_p_num+2] in num[9:] and txt_one[img_p_num+3] in men:
+                                        # 防止出现 p1一位... 时判断出[11]的错误结果
+                                        break
+
                                 # img_num_1 为 图img_num_1
+                                if len(txt_one) > img_p_num + 2: # 避免 string index out of range
+                                    if txt_one[img_p_num + 2] in to and txt_one[img_p_num + 3] in img_p:
+                                        # eg: 图一,图二,图三,图四
+                                        #     图一图二图三
+                                        for i in range(1,len(txt_one)-img_p_num):
+                                            if txt_one[img_p_num + i] in num and txt_one[img_p_num + i - 1] in img_p:
+                                                img_num = num.index(txt_one[img_p_num+i]) + 1
+                                                if img_num > 9:
+                                                    img_num = img_num - 9
+                                                img_num_3.append(img_num)
+                                        break
 
-                                if txt_one[img_p_num + 2] in to and txt_one[img_p_num + 3] in img_p and txt_one[img_p_num + 4] in num :
-                                    # eg: 图一至图三，p1-p3，P1到P3
-                                    img_num_2 = num.index(txt_one[img_p_num+4]) +1
-                                    if img_num_2 > 9:
-                                        img_num_2 = img_num_2 - 9
-                                    break
 
-                                elif txt_one[img_p_num+2] in img_p and txt_one[img_p_num + 3] in num :
-                                    # eg: 图一图三，p1p3，P1P3
-                                    img_num_2 = num.index(txt_one[img_p_num+3]) +1
-                                    if img_num_2 > 9:
-                                        img_num_2 = img_num_2 - 9
-                                    break
+                                    elif txt_one[img_p_num + 2] in img_p and txt_one[img_p_num + 3] in num :
+                                        # eg: 图一图三，p1p3，P1P3
+                                        img_num_2 = num.index(txt_one[img_p_num+3]) +1
+                                        if img_num_2 > 9:
+                                            img_num_2 = img_num_2 - 9
+                                        break
 
-                                elif txt_one[img_p_num + 2] in num :
-                                    # eg: 图一三，p13，P13
-                                    #     图一二三，p1234
-                                    img_num_2 = num.index(txt_one[img_p_num+2]) +1
-                                    if img_num_2 > 9:
-                                        img_num_2 = img_num_2 - 9
-                                    for i in range(1,len(txt_one)-img_p_num):
-                                        if txt_one[img_p_num + i] in num :
-                                            img_num = num.index(txt_one[img_p_num+i]) + 1
-                                            if img_num > 9:
-                                                img_num = img_num - 9
-                                            img_num_3.append(img_num)
-                                            if txt_one[img_p_num + i + 1] == '\n':
+
+                                    elif txt_one[img_p_num + 2] in to and txt_one[img_p_num + 3] in num :
+                                        # eg: 图一~三，p1-3
+                                        img_num_2 = num.index(txt_one[img_p_num+3]) +1
+                                        if img_num_2 > 9:
+                                            img_num_2 = img_num_2 - 9
+                                        break
+
+
+                                    elif txt_one[img_p_num + 2] in num :
+                                        # eg: 图一三，p13，P13
+                                        #     图一二三，p1234
+                                        #     图一,二,三， p1,2,3， P1,3,5
+                                        for i in range(1,len(txt_one)-img_p_num):
+                                            if txt_one[img_p_num + i] in num :
+                                                img_num = num.index(txt_one[img_p_num+i]) + 1
+                                                if len(txt_one) > img_p_num + i + 1:
+                                                    if txt_one[img_p_num + i] in num[9:] and txt_one[img_p_num + i+1] in men:
+                                                        # 防止出现 p123一位... 时判断出[1231]的错误结果
+                                                        break
+                                                if img_num > 9:
+                                                    img_num = img_num - 9
+                                                img_num_3.append(img_num)
+                                            elif txt_one[img_p_num + i] not in num and txt_one[img_p_num + i] not in and_:
+                                            # 既不是123 也不是，.，
                                                 break
-                                    break
+                                        break
 
-                                elif txt_one[img_p_num+2] in to and txt_one[img_p_num + 3] in num :
-                                    # eg: 图一,二,三， p1,2,3， P1,3,5
-                                    img_num_2 = num.index(txt_one[img_p_num+3]) +1
-                                    if img_num_2 > 9:
-                                        img_num_2 = img_num_2 - 9
-                                    break
 
-                                else:
-                                # 转到其他tag处理函数
-                                    pass
-
-                            else:
-                            # 转到其他tag处理函数
-                                pass
-                        else:
-                            # 转到其他tag处理函数
-                            pass
-
-                    elif txt_one[0] in num or txt_one[0] in num:
-                        # eg: 1.2.3.4
-                        #     1234
-                        if txt_one[0] == ' 'and txt_one [1] in num:
-                            txt_num_index = txt_one
-                        if len(txt_one)-img_p_num >= 15:
-                            max_ = 15
-                        else:
-                            max_ = len(txt_one)-img_p_num
-                        for i in range(2,max_):
-                            if txt_one[img_p_num + i] in num:
-                                img_num_3.append(i)
+                    elif txt_one[0] in num or txt_one[1] in num:
+                        # eg: 1.2.3.4  1234
+                        #     一二三四   一，二，三
+                        #     1-3    2~5
+                        if txt_one[0] not in num and txt_one [1] in num:
+                            fir_num_index = 1
+                        elif txt_one[0] in num:
+                            fir_num_index = 0
+                        for i in range(fir_num_index, len(txt_one)):
+                            if txt_one[i] in num:
+                                img_num = num.index(txt_one[i]) + 1
+                                if len(txt_one) > i + 1:
+                                    if txt_one[i] in num[9:] and txt_one[i + 1] in men:
+                                        # 防止出现 p123一位... 时判断出[1231]的错误结果
+                                        break
+                                if img_num > 9:
+                                    img_num = img_num - 9
+                                img_num_3.append(img_num)
+                            elif txt_one[i] not in num and txt_one[i] not in to:
+                                # 既不是123 也不是，.，
+                                break
+                        if len(img_num_3) == 3 and txt_one[fir_num_index] == '1' and txt_one[fir_num_index+1] in ['7','8']:
+                            # 过滤掉身高
+                            img_num_3 = []
+                        break
 
 
                 else:
                     pass
 
-            if img_num_2 == 0:
+            if img_num_3 != []:
+                img = img_num_3
+            elif img_num_2 == 0:
                 img = img_num_1
             elif img_num_3 == []:
                 img = [img_num_1,img_num_2]
