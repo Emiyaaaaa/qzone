@@ -4,13 +4,13 @@
 
 import pymysql
 import re
-from deal_txt_img import deal_txt_img
+from deal_txt_img import DealTxtImg
 
 maxinfo = 180 # 测试信息数量
 txt_list_ini = [''] #仅供测试用，见70-71行
 
 
-class deal_sql(object):
+class DealSql(object):
 
     def down_sql(self):
         connect = pymysql.connect(host='127.0.0.1',
@@ -70,7 +70,7 @@ class deal_sql(object):
         if txt_list_ini != [] and txt_list_ini != ['']:
             txt_list = txt_list_ini
         for txt in txt_list:
-            deal_txt_img().main(txt)
+            DealTxtImg().main(txt)
 
         return txt,img
 
@@ -83,4 +83,4 @@ class deal_sql(object):
 
 
 if __name__ == '__main__':
-    deal_sql().extract_html()
+    DealSql().extract_html()

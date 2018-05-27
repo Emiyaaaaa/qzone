@@ -4,7 +4,7 @@
 
 import re
 
-class deal_txt_img():
+class DealTxtImg():
     # 当初能力有限，未能想到用中文正则表达式，尽量早日用正则表达式重构一遍
 
     def deal_txt_1(self,txt_one):  # 仅处理一行txt
