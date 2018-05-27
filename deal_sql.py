@@ -5,7 +5,7 @@
 import pymysql
 import re
 
-maxinfo = 90
+maxinfo = 180
 
 class deal_sql(object):
 
@@ -80,17 +80,19 @@ class deal_sql(object):
             img_num_3 = [] # 两张或两张以上的图片的列表
 
             if txt_one != '\n' and txt_one != '</pre>':
+                txt_one = del_hight(txt_one)  # 去掉文本中的身高
                 for img in img_p:
                     if img in txt_one: # if img in txt_one[:3]:  前三个字中有 img_p
                         img_p_num = txt_one.index(img) # img_p_num 为 img_p 的索引
                         if len(txt_one) > img_p_num+1: # 确保 img_p 不在最后一个字的位置
-                            txt_one = del_hight(txt_one)  # 去掉文本中的身高
+
+
                             if txt_one[img_p_num+1] in num:
                                 img_num_1 = num.index(txt_one[img_p_num+1])+1
                                 if img_num_1 > 9:
                                     img_num_1 = img_num_1 - 9
                                 if len(txt_one) > img_p_num+3:
-                                    if txt_one[img_p_num+2] in num[9:] and txt_one[img_p_num+3] in men:
+                                    if txt_one[img_p_num+2] in num and txt_one[img_p_num+3] in men:
                                         # 防止出现 p1一位... 时判断出[11]的错误结果
                                         break
 
@@ -132,7 +134,7 @@ class deal_sql(object):
                                             if txt_one[img_p_num + i] in num :
                                                 img_num = num.index(txt_one[img_p_num+i]) + 1
                                                 if len(txt_one) > img_p_num + i + 1:
-                                                    if txt_one[img_p_num + i] in num[9:] and txt_one[img_p_num + i+1] in men:
+                                                    if txt_one[img_p_num + i] in num and txt_one[img_p_num + i+1] in men:
                                                         # 防止出现 p123一位... 时判断出[1231]的错误结果
                                                         break
                                                 if img_num > 9:
@@ -144,27 +146,28 @@ class deal_sql(object):
                                         break
 
 
-                    elif txt_one[0] in num or txt_one[1] in num:
-                        # eg: 1.2.3.4  1234
-                        #     一二三四   一，二，三
-                        #     1-3    2~5
-                        if txt_one[0] not in num and txt_one [1] in num:
-                            fir_num_index = 1
-                        elif txt_one[0] in num:
-                            fir_num_index = 0
-                        for i in range(fir_num_index, len(txt_one)):
-                            if txt_one[i] in num:
-                                img_num = num.index(txt_one[i]) + 1
-                                if len(txt_one) > i + 1:
-                                    if txt_one[i] in num[9:] and txt_one[i + 1] in men:
-                                        # 防止出现 p123一位... 时判断出[1231]的错误结果
-                                        break
-                                if img_num > 9:
-                                    img_num = img_num - 9
-                                img_num_3.append(img_num)
-                            elif txt_one[i] not in num and txt_one[i] not in to:
-                                # 既不是123 也不是，.，
-                                break
+                    elif len(txt_one) >= 2:
+                        if txt_one[0] in num or txt_one[1] in num:
+                            # eg: 1.2.3.4  1234
+                            #     一二三四   一，二，三
+                            #     1-3    2~5
+                            if txt_one[0] not in num and txt_one [1] in num:
+                                fir_num_index = 1
+                            elif txt_one[0] in num:
+                                fir_num_index = 0
+                            for i in range(fir_num_index, len(txt_one)):
+                                if txt_one[i] in num:
+                                    img_num = num.index(txt_one[i]) + 1
+                                    if len(txt_one) > i + 1:
+                                        if txt_one[i] in num and txt_one[i + 1] in men:
+                                            # 防止出现 p123一位... 时判断出[1231]的错误结果
+                                            break
+                                    if img_num > 9:
+                                        img_num = img_num - 9
+                                    img_num_3.append(img_num)
+                                elif txt_one[i] not in num and txt_one[i] not in to:
+                                    # 既不是123 也不是，.，
+                                    break
                         break
 
 
