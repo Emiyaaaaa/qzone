@@ -5,7 +5,7 @@
 import pymysql
 import re
 
-maxinfo = 60
+maxinfo = 90
 
 class deal_sql(object):
 
@@ -65,6 +65,7 @@ class deal_sql(object):
         return txt,img
 
     def deal_txt_img_sim(self,txt):
+        # 当初能力有限，未能想到用中文正则表达式，尽量早日用正则表达式重构一遍
 
         def deal_txt_1(txt_one): #仅处理一行txt
 
@@ -83,6 +84,7 @@ class deal_sql(object):
                     if img in txt_one: # if img in txt_one[:3]:  前三个字中有 img_p
                         img_p_num = txt_one.index(img) # img_p_num 为 img_p 的索引
                         if len(txt_one) > img_p_num+1: # 确保 img_p 不在最后一个字的位置
+                            txt_one = del_hight(txt_one)  # 去掉文本中的身高
                             if txt_one[img_p_num+1] in num:
                                 img_num_1 = num.index(txt_one[img_p_num+1])+1
                                 if img_num_1 > 9:
@@ -163,9 +165,6 @@ class deal_sql(object):
                             elif txt_one[i] not in num and txt_one[i] not in to:
                                 # 既不是123 也不是，.，
                                 break
-                        if len(img_num_3) == 3 and txt_one[fir_num_index] == '1' and txt_one[fir_num_index+1] in ['7','8']:
-                            # 过滤掉身高
-                            img_num_3 = []
                         break
 
 
@@ -181,6 +180,13 @@ class deal_sql(object):
             else:
                 img = img_num_3
             return img
+
+
+        def del_hight(txt_one):
+            # 去掉文本中的身高
+            txt = re.split(r'1[5678]\d',txt_one)
+            txt = ''.join(txt)
+            return txt
 
 
         img_list = []
