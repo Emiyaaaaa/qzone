@@ -53,27 +53,33 @@ class DealSql(object):
 
         txt = re.findall(text_all_re,html)
         img = re.findall(img_re,html)
+        # if txt_list_ini != [] and txt_list_ini != ['']:
+        #     txt_list = txt_list_ini
+        # for txt in txt_list:
+        #     DealTxtImg().main(txt)
+
+        self.deal_all(txt,img)
+        return txt,img
+
+    def deal_all(self,txt,img):
 
         tag_list = []
         txt_list = []
+        img_list = []
         for txt_ in txt:
             tag_list.append(txt_[0])
             txt_list.append(txt_[1])
 
+        for img_ in img:
+            img_list.append(img_)
 
         tag_all = len(txt)
         zdx_num = tag_list.index('找对象')
         zdx_txt = txt[zdx_num][1]
+        DealTxtImg().main(zdx_txt)
 
-        # deal_txt_img().main(zdx_txt)
-
-        if txt_list_ini != [] and txt_list_ini != ['']:
-            txt_list = txt_list_ini
-        for txt in txt_list:
-            DealTxtImg().main(txt)
-
-        return txt,img
-
+        if tag_all == 1:
+            return ['all']
 
     def deal_txt_img_el(self):
         pass

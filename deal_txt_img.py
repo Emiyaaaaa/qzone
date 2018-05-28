@@ -3,6 +3,7 @@
 # @Time    : 2018/5/27 14:49
 
 import re
+import os
 
 class DealTxtImg():
     # 当初能力有限，未能想到用中文正则表达式，尽量早日用正则表达式重构一遍
@@ -13,11 +14,12 @@ class DealTxtImg():
         num = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '一', '二', '三', '四', '五', '六', '七', '八', '九']
         to = ['-', '—', '到', '至', ',', '，', '、', '~', '.', ' ']
         and_ = [',', '.', '，', ' ']
-        men = ['个', '名', '位', '则', '句']
+        men = ['个', '名', '位', '则']
 
         img_num_1 = 0  # 第一张图号
         img_num_2 = 0  # 第二张图号
         img_num_3 = []  # 两张或两张以上的图片的列表
+        remove_num = []  # 删除p1图一等内容, 注意：元素为索引
 
         if txt_one != '\n' and txt_one != '</pre>':
             txt_one = self.del_else(txt_one)  # 去掉文本中的身高,年级
@@ -29,6 +31,8 @@ class DealTxtImg():
 
                         if txt_one[img_p_num + 1] in num:
                             img_num_1 = num.index(txt_one[img_p_num + 1]) + 1
+                            remove_num.append(img_p_num)
+                            remove_num.append(img_p_num+1)
                             if img_num_1 > 9:
                                 img_num_1 = img_num_1 - 9
                             if len(txt_one) > img_p_num + 3:
@@ -47,6 +51,7 @@ class DealTxtImg():
                                             if img_num > 9:
                                                 img_num = img_num - 9
                                             img_num_3.append(img_num)
+                                            remove_num.append(img_p_num + i)
                                     break
 
 
@@ -55,6 +60,7 @@ class DealTxtImg():
                                     img_num_2 = num.index(txt_one[img_p_num + 3]) + 1
                                     if img_num_2 > 9:
                                         img_num_2 = img_num_2 - 9
+                                    remove_num.append(img_p_num + 3)
                                     break
 
 
@@ -66,13 +72,14 @@ class DealTxtImg():
                                     for i in range(1, len(txt_one) - img_p_num):
                                         if txt_one[img_p_num + i] in num:
                                             img_num = num.index(txt_one[img_p_num + i]) + 1
-                                            if len(txt_one) > img_p_num + i + 1:
+                                            if len(txt_one) > img_p_num + i + 1: # 防止数组越界
                                                 if txt_one[img_p_num + i] in num and txt_one[img_p_num + i + 1] in men:
                                                     # 防止出现 p123一位... 时判断出[1231]的错误结果
                                                     break
                                             if img_num > 9:
                                                 img_num = img_num - 9
                                             img_num_3.append(img_num)
+                                            remove_num.append(img_p_num + i)
                                         elif txt_one[img_p_num + i] not in num and txt_one[img_p_num + i] not in and_ and txt_one[img_p_num + i] not in img_p:
                                             # 既不是123 也不是，.，
                                             break
@@ -98,6 +105,7 @@ class DealTxtImg():
                                 if img_num > 9:
                                     img_num = img_num - 9
                                 img_num_3.append(img_num)
+                                remove_num.append(i)
                             elif txt_one[i] not in num and txt_one[i] not in to:
                                 # 既不是123 也不是，.，
                                 break
@@ -112,11 +120,12 @@ class DealTxtImg():
             img = [img_num_1]
         else:
             img = [img_num_1, img_num_2]
-
         img = self.deal_img(img)
-        return img
+
+        return img,remove_num
 
     def del_else(self,txt_one):
+
         # 去掉文本中的身高
         txt = re.split(r'1[5678]\d', txt_one)
         txt = ''.join(txt)
@@ -126,8 +135,8 @@ class DealTxtImg():
         return txt
 
     def deal_img(self,img):
-        num_ini = 0
 
+        num_ini = 0
         if img != [] and img != 0:
             # 有序去重
             img_list = []
@@ -141,7 +150,17 @@ class DealTxtImg():
                     img.remove(num)
                 else:
                     num_ini = num
+
         return img
+
+    def remove_txt(self,txt_one,remove_num):
+
+        if remove_num == []:
+            txt_one = txt_one
+        else:
+            txt_one = txt_one[0:remove_num[0]]+txt_one[remove_num[-1]:-1]
+
+        return txt_one
 
 
     def main(self,txt):
@@ -152,10 +171,13 @@ class DealTxtImg():
             txt_n.remove('')
 
         for txt_one in txt_n:
-            img = self.deal_txt_1(txt_one)
+            img,remove_num = self.deal_txt_1(txt_one)
+            print(txt_one)
+            txt_one = self.remove_txt(txt_one,remove_num)
             img_list.append(img)
-
             print(txt_one,img)
 
         return txt, img_list
 
+if __name__ == '__main__':
+    os.system(os.path.join(os.path.abspath('.'),'deal_sql.py'))
