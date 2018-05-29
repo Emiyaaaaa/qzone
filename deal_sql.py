@@ -6,7 +6,7 @@ import pymysql
 import re
 from deal_txt_img import DealTxtImg
 
-maxinfo = 180 # 测试信息数量
+maxinfo = 30 # 测试信息数量
 txt_list_ini = [''] #仅供测试用，见70-71行
 
 

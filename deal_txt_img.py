@@ -86,7 +86,7 @@ class DealTxtImg():
                                     break
 
 
-                elif len(txt_one) >= 2:
+                elif len(txt_one) >= 2 and txt_one[0] not in img_p:
                     if txt_one[0] in num or txt_one[1] in num:
                         # eg: 1.2.3.4  1234
                         #     一二三四   一，二，三
@@ -154,12 +154,14 @@ class DealTxtImg():
         return img
 
     def remove_txt(self,txt_one,remove_num):
-
         if remove_num == []:
             txt_one = txt_one
         else:
-            txt_one = txt_one[0:remove_num[0]]+txt_one[remove_num[-1]:-1]
+            txt_one = txt_one[:remove_num[0]]+txt_one[remove_num[-1]+1:]
 
+        txt_one = (re.sub('[:：]', '', txt_one)) # 删掉类似'图一：'之类多余的字符串
+        txt_one = txt_one.strip(',.，。') # 删除左边逗号等字符
+        txt_one = txt_one.strip() # 删除两边空字符
         return txt_one
 
 
@@ -172,10 +174,10 @@ class DealTxtImg():
 
         for txt_one in txt_n:
             img,remove_num = self.deal_txt_1(txt_one)
-            print(txt_one)
+            print('last:'+txt_one)
             txt_one = self.remove_txt(txt_one,remove_num)
             img_list.append(img)
-            print(txt_one,img)
+            print('now:'+txt_one)
 
         return txt, img_list
 
