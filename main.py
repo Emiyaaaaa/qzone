@@ -2,17 +2,24 @@
 # @Author  : Li Haozheng
 # @Time    : 2018/5/8 20:25
 import os
-from qzone.qzone_sql import GetQzoneToMysql
+from qzone_sql import GetQzoneToMysql
+from deal_txt_img import DealTxtImg
 
-def main():
+max_page = 100
+
+def get_qzone_html():
+
     print('当前网络状态：',end='')
     exit_code = os.system('ping www.baidu.com')
     if exit_code == 0:
         print('畅通')
-        q = GetQzoneToMysql()
-        q.get_qzone()
+        GetQzoneToMysql().get_qzone(max_page)
     else:
         print('离线模式')
 
 
-main()
+def deal_txt():
+    pass
+
+
+# get_qzone_html()

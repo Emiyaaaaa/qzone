@@ -171,5 +171,4 @@ class GetQzoneToMysql(object):
 
 if __name__ == '__main__':
 
-    q = GetQzoneToMysql()
-    q.get_qzone()
+    GetQzoneToMysql().get_qzone()

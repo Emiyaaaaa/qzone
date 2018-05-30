@@ -174,12 +174,10 @@ class DealTxtImg():
 
         for txt_one in txt_n:
             img,remove_num = self.deal_txt_1(txt_one)
-            print('last:'+txt_one)
-            txt_one = self.remove_txt(txt_one,remove_num)
+            # txt_one = self.remove_txt(txt_one,remove_num)
             img_list.append(img)
-            print('now:'+txt_one)
 
-        return txt, img_list
+        return txt_n, img_list
 
 if __name__ == '__main__':
     os.system(os.path.join(os.path.abspath('.'),'deal_sql.py'))
