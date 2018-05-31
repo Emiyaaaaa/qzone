@@ -4,9 +4,7 @@
 
 import pymysql
 import re
-import os
-import sys
-from deal_txt_img import DealTxtImg
+from deal_all_txt import DealAll
 
 maxinfo = 180 # 测试信息数量
 
@@ -54,42 +52,11 @@ class DealSql(object):
 
         txt = re.findall(text_all_re,html)
         img = re.findall(img_re,html)
-        # if txt_list_ini != [] and txt_list_ini != ['']:
-        #     txt_list = txt_list_ini
-        # for txt in txt_list:
-        #     DealTxtImg().main(txt)
+        img,txt = DealAll().deal_all(txt,img)
 
-        img = self.deal_all(txt,img)
         return txt,img
 
-    def deal_all(self,txt,img):
 
-        tag_list = []
-        txt_list = []
-        img_list = [] # 元素并不是数字，而是图片url
-        txt_else_list = []
-        img_else_list = []
-
-        for txt_ in txt:
-            tag_list.append(txt_[0])
-            txt_list.append(txt_[1])
-
-        for img_ in img:
-            img_list.append(img_)
-
-        img_all = len(img)
-        tag_all = len(txt)
-        zdx_num = tag_list.index('找对象')
-        zdx_txt = txt[zdx_num][1]
-
-        # 此处开始分析
-        text, img_num = DealTxtImg().main(zdx_txt)
-        if tag_all != 1 and (img_num == [] or img_num == [[]]):
-            for txt_ in txt_list:
-                txt_else, img_num_else = DealTxtImg().main(txt_)
-                txt_else_list.append(txt_else)
-                img_else_list.append(img_num_else)
-            print(txt_else_list,img_else_list)
 
 
     def up_sql(self,txt,img):

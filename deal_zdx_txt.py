@@ -21,7 +21,7 @@ class DealTxtImg():
         img_num_3 = []  # 两张或两张以上的图片的列表
         remove_num = []  # 删除p1图一等内容, 注意：元素为索引
 
-        if txt_one != '\n' and txt_one != '</pre>':
+        if txt_one != '\n' and txt_one != '</pre>' and txt_one != '':
             txt_one = self.del_else(txt_one)  # 去掉文本中的身高,年级
             for img in img_p:
                 # 在适当位置添加break以减少不必要的循环
@@ -172,9 +172,10 @@ class DealTxtImg():
         while '' in txt_n:
             txt_n.remove('')
 
+        if txt_n == []:
+            img_list = [[]]
         for txt_one in txt_n:
-            img,remove_num = self.deal_txt_1(txt_one)
-            # txt_one = self.remove_txt(txt_one,remove_num)
+            img, remove_num = self.deal_txt_1(txt_one)
             img_list.append(img)
 
         return txt_n, img_list
