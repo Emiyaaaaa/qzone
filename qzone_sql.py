@@ -11,7 +11,7 @@ import os
 
 executable_path = "chromedriver.exe" # headless-chrome路径
 qq = '486904330'
-max_info = 100 # 数据库新增内容数量上限,设为 0 时默认上限为 1000
+max_info = 20 # 数据库新增内容数量上限,设为 0 时默认上限为 1000
 
 
 sql_new_time = []

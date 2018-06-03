@@ -4,6 +4,28 @@
 
 import re
 import os
+import urllib.request
+
+class GetMeasureWord(object):
+
+    __species = None
+    __first_init = True
+
+    def __new__(cls, *args, **kwargs):
+        if cls.__species == None:
+            cls.__species = object.__new__(cls)
+        return cls.__species
+
+    def __init__(self):
+        if self.__first_init:
+            url = 'http://xh.5156edu.com/page/z7949m2560j18586.html'
+            url_txt = urllib.request.urlopen(url).read().decode('gbk')
+            regular = r'<TD width=’11%’><A [\s\S]+?>([\S])</A></TD>'
+            measure_word_list = re.findall(regular, url_txt)
+            measure_word_list.append(u'位')
+            self.measure_word_list = measure_word_list
+            self.__class__.__first_init = False
+
 
 class DealTxtImg():
     # 当初能力有限，未能想到用中文正则表达式，尽量早日用正则表达式重构一遍
@@ -14,7 +36,7 @@ class DealTxtImg():
         num = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '一', '二', '三', '四', '五', '六', '七', '八', '九']
         to = ['-', '—', '到', '至', ',', '，', '、', '~', '.', ' ']
         and_ = [',', '.', '，', ' ']
-        men = ['个', '名', '位', '则']
+        men = GetMeasureWord().measure_word_list
 
         img_num_1 = 0  # 第一张图号
         img_num_2 = 0  # 第二张图号
@@ -91,10 +113,12 @@ class DealTxtImg():
                         # eg: 1.2.3.4  1234
                         #     一二三四   一，二，三
                         #     1-3    2~5
-                        if txt_one[0] not in num and txt_one[1] in num:
+                        if txt_one[0] not in num and txt_one[1] in num and txt_one[0].isalpha() == False:
                             fir_num_index = 1
                         elif txt_one[0] in num:
                             fir_num_index = 0
+                        else:
+                            break
                         for i in range(fir_num_index, len(txt_one)):
                             if txt_one[i] in num:
                                 img_num = num.index(txt_one[i]) + 1
@@ -131,6 +155,9 @@ class DealTxtImg():
         txt = ''.join(txt)
         # 去掉文本中的年级
         txt = re.split(u'大[一二三四]', txt)
+        txt = ''.join(txt)
+        # 去掉文本中的入学年份
+        txt = re.split(u'1[123456789]级', txt)
         txt = ''.join(txt)
         return txt
 

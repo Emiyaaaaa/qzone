@@ -3,15 +3,14 @@
 # @Time    : 2018/5/8 20:25
 import os
 from qzone_sql import GetQzoneToMysql
-from deal_txt_img import DealTxtImg
+from deal_zdx_txt import DealTxtImg
 
 max_page = 100
 
 def get_qzone_html():
 
     print('当前网络状态：',end='')
-    exit_code = os.system('ping www.baidu.com')
-    if exit_code == 0:
+    if os.system('ping www.baidu.com') == 0:
         print('畅通')
         GetQzoneToMysql().get_qzone(max_page)
     else:
