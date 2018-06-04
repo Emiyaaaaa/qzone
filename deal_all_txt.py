@@ -99,7 +99,7 @@ class DealAll():
         # 此处开始分析
         txt_zdx, img_zdx = DealTxtImg().main(zdx_txt)
         if tag_num != 1 and self.list_flatten(img_zdx) == []:
-            # 多个tag，且zdx tag下全为空(空已转化为'zdx')
+            # 1.多个tag，且zdx tag下全为空(空已转化为'zdx')
             for i in range(len(img_all_list[zdx_num])):
                 # 为zdx_txt 添加特有标志
                 if img_all_list[zdx_num][i] == []:
@@ -122,18 +122,34 @@ class DealAll():
                         # 文本行数和图片数量不一样
                         front_img_num = 0 # 非索引
                         for txt_temp_list in txt_all_list[:zdx_num]:
+                            if txt_temp_list == []:
+                                front_img_num = front_img_num + 1
                             for txt_temp in txt_temp_list:
                                 front_img_num = front_img_num + self.txt_num(txt_temp)
-                        front_img_num + 1
+                        front_img_num = front_img_num + 1
+                        # behind_img_num_from_txt_num 为通过zdx有几则推断的 behind_img_num ，用于和之后的 behind_img_num 比较
+                        try:
+                            print(txt_all_list[zdx_num])
+                            if txt_all_list[zdx_num] == []:
+                                print(1)
+                                behind_img_num_from_txt_num = img_num
+                            else:
+                                behind_img_num_from_txt_num = front_img_num + 1 + self.txt_num(self.list_flatten(txt_all_list[zdx_num]))
+                        except:
+                            print('error')
 
                         behind_img_num = 0
                         if len(txt_all_list) != zdx_num + 1:# zdx 不是txt尾
                             for txt_temp_list in txt_all_list[zdx_num+1:]:
+                                if txt_temp_list == []:
+                                    front_img_num = front_img_num + 1
                                 for txt_temp in txt_temp_list:
                                     behind_img_num = behind_img_num + self.txt_num(txt_temp)
                         else:
                             behind_img_num = 0
                         behind_img_num = img_num - behind_img_num
+                        if behind_img_num_from_txt_num > behind_img_num:
+                            behind_img_num = behind_img_num_from_txt_num
 
                 else:
                     front_img_num = 0  # 非索引
@@ -167,7 +183,12 @@ class DealAll():
 
 
         elif ' ' not in self.list_flatten_add_space(img_zdx):
+            # 3.直接可以知道图号的
             img_num_list = self.list_flatten(img_zdx)
+
+        elif tag_num == 1:
+            # 4.没有其他tag的
+            img_num_list = [1,img_num]
 
 
         print(txt)

@@ -18,11 +18,16 @@ class GetMeasureWord(object):
 
     def __init__(self):
         if self.__first_init:
-            url = 'http://xh.5156edu.com/page/z7949m2560j18586.html'
-            url_txt = urllib.request.urlopen(url).read().decode('gbk')
-            regular = r'<TD width=’11%’><A [\s\S]+?>([\S])</A></TD>'
-            measure_word_list = re.findall(regular, url_txt)
-            measure_word_list.append(u'位')
+            try:
+                url = 'http://xh.5156edu.com/page/z7949m2560j18586.html'
+                url_txt = urllib.request.urlopen(url).read().decode('gbk')
+                regular = r'<TD width=’11%’><A [\s\S]+?>([\S])</A></TD>'
+                measure_word_list = re.findall(regular, url_txt)
+                measure_word_list.append(u'位')
+            except:
+                print('量词获取失败')
+                measure_word_list = ['个','位','则','句','名']
+
             self.measure_word_list = measure_word_list
             self.__class__.__first_init = False
 
@@ -158,6 +163,9 @@ class DealTxtImg():
         txt = ''.join(txt)
         # 去掉文本中的入学年份
         txt = re.split(u'1[123456789]级', txt)
+        txt = ''.join(txt)
+        # 去掉文本中的出生年龄
+        txt = re.split(u'[90][123456789][年后]', txt)
         txt = ''.join(txt)
         return txt
 

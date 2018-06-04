@@ -6,7 +6,7 @@ import pymysql
 import re
 from deal_all_txt import DealAll
 
-maxinfo = 500 # 测试信息数量
+maxinfo = 205 # 测试信息数量
 
 
 class DealSql(object):
