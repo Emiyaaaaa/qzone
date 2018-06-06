@@ -129,14 +129,13 @@ class DealAll():
                         front_img_num = front_img_num + 1
                         # behind_img_num_from_txt_num 为通过zdx有几则推断的 behind_img_num ，用于和之后的 behind_img_num 比较
                         try:
-                            print(txt_all_list[zdx_num])
                             if txt_all_list[zdx_num] == []:
-                                print(1)
                                 behind_img_num_from_txt_num = img_num
                             else:
-                                behind_img_num_from_txt_num = front_img_num + 1 + self.txt_num(self.list_flatten(txt_all_list[zdx_num]))
+                                behind_img_num_from_txt_num = front_img_num + 1 + self.txt_num(''.join(self.list_flatten(txt[zdx_num][1])))
                         except:
                             print('error')
+
 
                         behind_img_num = 0
                         if len(txt_all_list) != zdx_num + 1:# zdx 不是txt尾
@@ -148,6 +147,7 @@ class DealAll():
                         else:
                             behind_img_num = 0
                         behind_img_num = img_num - behind_img_num
+
                         if behind_img_num_from_txt_num > behind_img_num:
                             behind_img_num = behind_img_num_from_txt_num
 
@@ -190,10 +190,11 @@ class DealAll():
             # 4.没有其他tag的
             img_num_list = [1,img_num]
 
-
         print(txt)
         print(img_num_list)
-        print('img:' + str(img_num) + '\n')
+        print('img: '+str(img_num))
+        print()
+
 
         return txt,img # 注意修改
 
