@@ -59,8 +59,9 @@ class DealAll():
                     return 1
             except:
                 return 2
-            return 2
         elif re.findall(u'三',txt):
+            return 3
+        elif re.findall(u'好多',txt):
             return 3
         elif re.findall(u'四', txt):
             return 4
