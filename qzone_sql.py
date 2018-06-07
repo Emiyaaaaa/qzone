@@ -115,17 +115,23 @@ class GetQzoneToMysql(object):
                 else:
                     #nextpage
                     try:
-                        driver.find_element_by_id('pager_next_'+ str(i)).click()
+                        driver.find_element_by_id(self.get_next_page(driver.page_source)).click()
                         time.sleep(3)
                     except BaseException:
                         time.sleep(3)
-                        driver.find_element_by_id('pager_next_' + str(i)).click()
+                        driver.find_element_by_id(self.get_next_page(driver.page_source)).click()
                         time.sleep(3)
                         continue
 
 
         driver.close()
         driver.quit()
+
+    def get_next_page(self,txt):
+        reg = r'<a href="javascript:void[\s\S]+?;"[\s\S]+?" title="下一页" id="([\s\S]+?)" class="c_tx">'
+        next_page = re.findall(reg,txt)
+        print(next_page)
+        return next_page
 
     def get_time(self,text):
 

@@ -25,7 +25,7 @@ class GetMeasureWord(object):
                 measure_word_list = re.findall(regular, url_txt)
                 measure_word_list.append(u'位')
             except:
-                print('量词获取失败')
+                print('measure_word获取失败(你好像没网啊)')
                 measure_word_list = ['个','位','则','句','名']
 
             self.measure_word_list = measure_word_list

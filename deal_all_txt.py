@@ -57,6 +57,8 @@ class DealAll():
             try:
                 if txt[txt.index(re.findall(u'[和|两|与|跟]', txt)[0]) + 1] == u'墙':
                     return 1
+                else:
+                    return 2
             except:
                 return 2
         elif re.findall(u'三',txt):
@@ -79,6 +81,7 @@ class DealAll():
         txt_all_list = []
         img_all_list = []
         img_num_list = []
+        num_list = []
 
         for txt_ in txt:
             tag_list.append(txt_[0])
@@ -99,8 +102,19 @@ class DealAll():
 
         # 此处开始分析
         txt_zdx, img_zdx = DealTxtImg().main(zdx_txt)
-        if tag_num != 1 and self.list_flatten(img_zdx) == []:
-            # 1.多个tag，且zdx tag下全为空(空已转化为'zdx')
+
+        if self.list_flatten_add_space(img_zdx) != [] and ' ' not in self.list_flatten_add_space(img_zdx):
+            # 1.直接可以知道图号的
+            img_num_list = self.list_flatten(img_zdx)
+
+
+        elif tag_num == 1:
+            # 2.没有其他tag的
+            img_num_list = [1,img_num]
+
+
+        elif tag_num != 1 and self.list_flatten(img_zdx) == []:
+            # 3.多个tag，且zdx tag下全为空(空将转化为'zdx')
             for i in range(len(img_all_list[zdx_num])):
                 # 为zdx_txt 添加特有标志
                 if img_all_list[zdx_num][i] == []:
@@ -133,7 +147,7 @@ class DealAll():
                             if txt_all_list[zdx_num] == []:
                                 behind_img_num_from_txt_num = img_num
                             else:
-                                behind_img_num_from_txt_num = front_img_num + 1 + self.txt_num(''.join(self.list_flatten(txt[zdx_num][1])))
+                                behind_img_num_from_txt_num = front_img_num  + self.txt_num(''.join(self.list_flatten(txt[zdx_num][1]))) - 1
                         except:
                             print('error')
 
@@ -148,7 +162,6 @@ class DealAll():
                         else:
                             behind_img_num = 0
                         behind_img_num = img_num - behind_img_num
-
                         if behind_img_num_from_txt_num > behind_img_num:
                             behind_img_num = behind_img_num_from_txt_num
 
@@ -183,18 +196,44 @@ class DealAll():
                     img_num_list = [front_img_num, behind_img_num]
 
 
-        elif ' ' not in self.list_flatten_add_space(img_zdx):
-            # 3.直接可以知道图号的
-            img_num_list = self.list_flatten(img_zdx)
+        elif tag_num != 1 and self.list_flatten(img_zdx) != []:
+            # 4.多个tag，且zdx tag下部分为空(空将转化为'zdx')
+            for i in range(len(img_all_list[zdx_num])):
+                # 为zdx_txt 添加特有标志
+                if img_all_list[zdx_num][i] == []:
+                    img_all_list[zdx_num][i] = ['zdx']
 
-        elif tag_num == 1:
-            # 4.没有其他tag的
-            img_num_list = [1,img_num]
+            front_img_num = 0
+            for i in range(len(img_all_list[zdx_num])):
+                if img_all_list[zdx_num][i].isdigit() == True:
+                    num_list.append(int(img_all_list[zdx_num][i].isdigit()))
+            if num_list != []:
+                front_img_num = min(num_list)
+
+            behind_img_num = 0
+            if len(txt_all_list) != zdx_num + 1:
+                for i in range(len(txt_all_list[zdx_num + 1:])):
+                    for j in range(len(txt_all_list[zdx_num + 1:][i])):
+                        if img_all_list[zdx_num + 1:][i][j] == []:
+                            behind_img_num = behind_img_num + self.txt_num(txt_all_list[zdx_num + 1:][i][j])
+            else:
+                behind_img_num = 0
+            try:
+                behind_img_num = self.list_flatten(img_all_list)[self.list_finder('zdx', self.list_flatten(img_all_list))[-1] + 1] - 1
+                behind_img_num = img_num - behind_img_num
+            except:
+                pass
+            behind_img_num = img_num - behind_img_num
+
+            if img_num_list == []:
+                img_num_list = [front_img_num, behind_img_num]
+
 
         print(txt)
         print(img_num_list)
-        print('img: '+str(img_num))
+        print('img: ' + str(img_num))
         print()
+
 
 
         return txt,img # 注意修改
