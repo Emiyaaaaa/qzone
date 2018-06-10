@@ -6,7 +6,7 @@ import re
 import os
 import urllib.request
 
-class GetMeasureWord(object):
+class GetMeasureWord():
 
     __species = None
     __first_init = True
@@ -69,6 +69,29 @@ class DealTxtImg():
 
                             # img_num_1 为 图img_num_1
                             if len(txt_one) > img_p_num + 3:  # 避免 string index out of range
+
+                                try:
+                                    # eg: 图一 —— 图二，图二——图五, 图三—— 六
+                                    for i in range(4):
+                                        if txt_one[img_p_num + i + 2] in to and txt_one[img_p_num + i + 3] in img_p and txt_one[img_p_num + i + 4] in num:
+                                            img_num_2 = num.index(txt_one[img_p_num + i + 4]) + 1
+                                            if img_num_2 > 9:
+                                                img_num_2 = img_num_2 - 9
+                                            remove_num = [img_p_num,img_p_num + i + 4]
+                                            break
+                                        elif txt_one[img_p_num + i + 2] in to and txt_one[img_p_num + i + 3] in num:
+                                            if len(txt_one) > img_p_num + i + 4:
+                                                if txt_one[img_p_num + i + 4] in men:
+                                                    break
+                                            img_num_2 = num.index(txt_one[img_p_num + i + 3]) + 1
+                                            if img_num_2 > 9:
+                                                img_num_2 = img_num_2 - 9
+                                            remove_num = [img_p_num,img_p_num + i + 3]
+                                            break
+                                    break
+                                except:
+                                    pass
+
 
                                 if txt_one[img_p_num + 2] in to and txt_one[img_p_num + 3] in img_p:
                                     # eg: 图一,图二,图三,图四
@@ -188,6 +211,7 @@ class DealTxtImg():
 
         return img
 
+
     def remove_txt(self,txt_one,remove_num):
         if remove_num == []:
             txt_one = txt_one
@@ -211,9 +235,10 @@ class DealTxtImg():
             img_list = [[]]
         for txt_one in txt_n:
             img, remove_num = self.deal_txt_1(txt_one)
+            #remove！！！
             img_list.append(img)
 
         return txt_n, img_list
 
 if __name__ == '__main__':
-    os.system(os.path.join(os.path.abspath('.'),'deal_sql.py'))
+    os.system('python ' + os.path.join(os.path.abspath('.'),'deal_sql.py'))

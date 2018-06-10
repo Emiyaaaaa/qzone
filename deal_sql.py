@@ -52,7 +52,7 @@ class DealSql(object):
 
         txt = re.findall(text_all_re,html)
         img = re.findall(img_re,html)
-        img,txt = DealAll().deal_all(txt,img)
+        img,txt = DealAll().main(txt,img)
 
         return txt,img
 
