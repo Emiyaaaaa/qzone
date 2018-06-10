@@ -38,10 +38,11 @@ class DealTxtImg():
     def deal_txt_1(self,txt_one):  # 仅处理一行txt
 
         img_p = ['图', 'p', 'P']
-        num = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '一', '二', '三', '四', '五', '六', '七', '八', '九']
+        num = ['1', '2', '3', '4', '5', '6', '7', '8', '9','10','11','12','13','14', '一', '二', '三', '四', '五', '六', '七', '八', '九','十','十一']
         to = ['-', '—', '到', '至', ',', '，', '、', '~', '.', ' ']
         and_ = [',', '.', '，', ' ']
         men = GetMeasureWord().measure_word_list
+        sub_num = len(num)//2
 
         img_num_1 = 0  # 第一张图号
         img_num_2 = 0  # 第二张图号
@@ -60,8 +61,9 @@ class DealTxtImg():
                             img_num_1 = num.index(txt_one[img_p_num + 1]) + 1
                             remove_num.append(img_p_num)
                             remove_num.append(img_p_num+1)
-                            if img_num_1 > 9:
-                                img_num_1 = img_num_1 - 9
+                            if img_num_1 > sub_num:
+                                img_num_1 = img_num_1 - sub_num
+                            # 此处不宜支持十以上的判断
                             if len(txt_one) > img_p_num + 3:
                                 if txt_one[img_p_num + 2] in num and txt_one[img_p_num + 3] in men:
                                     # 防止出现 p1一位... 时判断出[11]的错误结果
@@ -75,8 +77,8 @@ class DealTxtImg():
                                     for i in range(4):
                                         if txt_one[img_p_num + i + 2] in to and txt_one[img_p_num + i + 3] in img_p and txt_one[img_p_num + i + 4] in num:
                                             img_num_2 = num.index(txt_one[img_p_num + i + 4]) + 1
-                                            if img_num_2 > 9:
-                                                img_num_2 = img_num_2 - 9
+                                            if img_num_2 > sub_num:
+                                                img_num_2 = img_num_2 - sub_num
                                             remove_num = [img_p_num,img_p_num + i + 4]
                                             break
                                         elif txt_one[img_p_num + i + 2] in to and txt_one[img_p_num + i + 3] in num:
@@ -84,13 +86,24 @@ class DealTxtImg():
                                                 if txt_one[img_p_num + i + 4] in men:
                                                     break
                                             img_num_2 = num.index(txt_one[img_p_num + i + 3]) + 1
-                                            if img_num_2 > 9:
-                                                img_num_2 = img_num_2 - 9
+                                            if img_num_2 > sub_num:
+                                                img_num_2 = img_num_2 - sub_num
                                             remove_num = [img_p_num,img_p_num + i + 3]
                                             break
-                                    break
                                 except:
-                                    pass
+                                    try:
+                                        for i in range(4):
+                                            if txt_one[img_p_num + i + 2] in to and txt_one[img_p_num + i + 3] in num:
+                                                if len(txt_one) > img_p_num + i + 4:
+                                                    if txt_one[img_p_num + i + 4] in men:
+                                                        break
+                                                img_num_2 = num.index(txt_one[img_p_num + i + 3]) + 1
+                                                if img_num_2 > sub_num:
+                                                    img_num_2 = img_num_2 - sub_num
+                                                remove_num = [img_p_num, img_p_num + i + 3]
+                                                break
+                                    except:
+                                        pass
 
 
                                 if txt_one[img_p_num + 2] in to and txt_one[img_p_num + 3] in img_p:
@@ -98,8 +111,8 @@ class DealTxtImg():
                                     for i in range(1, len(txt_one) - img_p_num):
                                         if txt_one[img_p_num + i] in num and txt_one[img_p_num + i - 1] in img_p:
                                             img_num = num.index(txt_one[img_p_num + i]) + 1
-                                            if img_num > 9:
-                                                img_num = img_num - 9
+                                            if img_num > sub_num:
+                                                img_num = img_num - sub_num
                                             img_num_3.append(img_num)
                                             remove_num.append(img_p_num + i)
                                     break
@@ -108,8 +121,17 @@ class DealTxtImg():
                                 elif txt_one[img_p_num + 2] in to and txt_one[img_p_num + 3] in num and txt_one[img_p_num + 2] not in and_:
                                     # eg: 图一~三，p1-3
                                     img_num_2 = num.index(txt_one[img_p_num + 3]) + 1
-                                    if img_num_2 > 9:
-                                        img_num_2 = img_num_2 - 9
+                                    if img_num_2 > sub_num:
+                                        img_num_2 = img_num_2 - sub_num
+                                    # 支持十以上的判断
+                                    try:
+                                        if ''.join([txt_one[img_p_num + 3],txt_one[img_p_num + 4]]) in num:
+                                            img_num_2 = num.index(''.join([txt_one[img_p_num + 3],txt_one[img_p_num + 4]])) + 1
+                                            if img_num_2 > sub_num:
+                                                img_num_2 = img_num_2 - sub_num
+                                            remove_num.append(img_p_num + 4)
+                                    except:
+                                        pass
                                     remove_num.append(img_p_num + 3)
                                     break
 
@@ -126,8 +148,8 @@ class DealTxtImg():
                                                 if txt_one[img_p_num + i] in num and txt_one[img_p_num + i + 1] in men:
                                                     # 防止出现 p123一位... 时判断出[1231]的错误结果
                                                     break
-                                            if img_num > 9:
-                                                img_num = img_num - 9
+                                            if img_num > sub_num:
+                                                img_num = img_num - sub_num
                                             img_num_3.append(img_num)
                                             remove_num.append(img_p_num + i)
                                         elif txt_one[img_p_num + i] not in num and txt_one[img_p_num + i] not in and_ and txt_one[img_p_num + i] not in img_p:
@@ -154,8 +176,8 @@ class DealTxtImg():
                                     if txt_one[i] in num and txt_one[i + 1] in men:
                                         # 防止出现 p123一位... 时判断出[1231]的错误结果
                                         break
-                                if img_num > 9:
-                                    img_num = img_num - 9
+                                if img_num > sub_num:
+                                    img_num = img_num - sub_num
                                 img_num_3.append(img_num)
                                 remove_num.append(i)
                             elif txt_one[i] not in num and txt_one[i] not in to:

@@ -223,10 +223,29 @@ class DealAll():
         except:
             img_num_list = [1,img_num]
 
+
+        img_list = []
+        group_list = []
+        i_last = 0
         if self.list_flatten(img_zdx) != []:
-            if ' ' in self.list_flatten_add_space_2(img_zdx):
+            if ' ' not in self.list_flatten_add_space_2(img_zdx):
+                for i in range(len(txt_zdx)):
+                    img_list.append([[txt_zdx[i]],img_zdx[i]])
+            else:
+                for i in range(len(txt_zdx)):
+                    if img_zdx[i] != []:
+                        group_list.append(i)
+                if len(group_list) == 1:
+                    img_list.append([[','.join(self.list_flatten(txt_zdx))],[','.join('%s' %id for id in self.list_flatten(img_zdx))]])
+                else:
+                    group_list.append(len(img_zdx))
+                    for i in group_list[1:]:
+                        print(group_list)
+                        img_list.append([[','.join(self.list_flatten(txt_zdx[i_last:i]))],[','.join('%s' %id for id in self.list_flatten(img_zdx[i_last:i]))]])
+                        i_last = i
+
                 print(txt_zdx)
-                print(img_zdx)
+                print(img_list)
 
             # print(txt)
             # print(img_num_list)
