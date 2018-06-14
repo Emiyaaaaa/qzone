@@ -38,7 +38,7 @@ class DealTxtImg():
     def deal_txt_1(self,txt_one):  # 仅处理一行txt
 
         img_p = ['图', 'p', 'P']
-        num = ['1', '2', '3', '4', '5', '6', '7', '8', '9','10','11','12','13','14', '一', '二', '三', '四', '五', '六', '七', '八', '九','十','十一']
+        num = ['1', '2', '3', '4', '5', '6', '7', '8', '9','10','11','12','13','14', '一', '二', '三', '四', '五', '六', '七', '八', '九','十','十一','十二','十三','十四']
         to = ['-', '—', '到', '至', ',', '，', '、', '~', '.', ' ']
         and_ = [',', '.', '，', ' ']
         men = GetMeasureWord().measure_word_list
@@ -214,24 +214,24 @@ class DealTxtImg():
         txt = ''.join(txt)
         return txt
 
-    def deal_img(self,img):
+    def deal_img(self,num_list):
 
         num_ini = 0
-        if img != [] and img != 0:
+        if num_list != [] and num_list != 0:
             # 有序去重
             img_list = []
-            for i in img:
+            for i in num_list:
                 if i not in img_list:
                     img_list.append(i)
-            img = img_list
+            num_list = img_list
 
-            for num in img:
+            for num in num_list:
                 if num <= num_ini:
-                    img.remove(num)
+                    num_list.remove(num)
                 else:
                     num_ini = num
 
-        return img
+        return num_list
 
 
     def remove_txt(self,txt_one,remove_num):
@@ -249,18 +249,19 @@ class DealTxtImg():
     def main(self,txt):
 
         img_list = []
+        txt_n_new = []
         txt_n = re.split('\n', txt)  # txt_n 为 .split换行符后的 txt_list
         while '' in txt_n:
             txt_n.remove('')
 
-        if txt_n == []:
-            img_list = [[]]
         for txt_one in txt_n:
             img, remove_num = self.deal_txt_1(txt_one)
-            #remove！！！
+            txt_new = self.remove_txt(txt_one, remove_num)
+            txt_n_new.append(txt_new)
             img_list.append(img)
-
-        return txt_n, img_list
+        if txt_n == []:
+            img_list = [[]]
+        return txt_n_new, img_list
 
 if __name__ == '__main__':
     os.system('python ' + os.path.join(os.path.abspath('.'),'deal_sql.py'))

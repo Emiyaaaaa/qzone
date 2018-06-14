@@ -204,7 +204,29 @@ class DealAll():
                 if img_num_list == []:
                     img_num_list = [front_img_num, behind_img_num]
 
-        return txt,img_num_list # 注意修改
+        return [zdx_txt],img_num_list # 注意修改
+
+
+    def deal_num(self,num_list):
+        # 数字列表处理,大小先后顺序，去重等
+        num_ini = 0
+        if num_list != [] and num_list != 0:
+            # 有序去重
+            img_list = []
+            for i in num_list:
+                if i not in img_list:
+                    img_list.append(i)
+            num_list = img_list
+
+            for num in num_list:
+                if num <= num_ini:
+                    num_list.remove(num)
+                else:
+                    num_ini = num
+
+        num_list = [num_list[0],num_list[-1]]
+
+        return num_list
 
 
     def main(self,txt,img):
@@ -219,38 +241,37 @@ class DealAll():
         zdx_txt = txt[zdx_num][1]
         txt_zdx, img_zdx = DealTxtImg().main(zdx_txt)
         try:
-            txt, img_num_list = self.deal_all(txt,img)
+            txt_list, img_num_list = self.deal_all(txt,img)
         except:
             img_num_list = [1,img_num]
 
-
-        img_list = []
+        txt_img_list = []
         group_list = []
         i_last = 0
         if self.list_flatten(img_zdx) != []:
             if ' ' not in self.list_flatten_add_space_2(img_zdx):
                 for i in range(len(txt_zdx)):
-                    img_list.append([[txt_zdx[i]],img_zdx[i]])
+                    txt_img_list.append([[txt_zdx[i]],img_zdx[i]])
             else:
                 for i in range(len(txt_zdx)):
                     if img_zdx[i] != []:
                         group_list.append(i)
                 if len(group_list) == 1:
-                    img_list.append([[','.join(self.list_flatten(txt_zdx))],[','.join('%s' %id for id in self.list_flatten(img_zdx))]])
+                    txt_img_list.append([[','.join(self.list_flatten(txt_zdx))],[','.join('%s' %id for id in self.list_flatten(img_zdx))]])
                 else:
                     group_list.append(len(img_zdx))
                     for i in group_list[1:]:
                         print(group_list)
-                        img_list.append([[','.join(self.list_flatten(txt_zdx[i_last:i]))],[','.join('%s' %id for id in self.list_flatten(img_zdx[i_last:i]))]])
+                        txt_img_list.append([[','.join(self.list_flatten(txt_zdx[i_last:i]))],[','.join('%s' %id for id in self.list_flatten(img_zdx[i_last:i]))]])
                         i_last = i
+        else:
+            txt_img_list.append([[','.join(self.list_flatten(txt_list))], [','.join('%s' % id for id in self.list_flatten(img_num_list))]])
 
-                print(txt_zdx)
-                print(img_list)
-
-            # print(txt)
-            # print(img_num_list)
-                print()
-        return txt,img
+        print(txt)
+        print(txt_zdx)
+        print(txt_img_list)
+        print()
+        return txt_img_list
 
 
 if __name__ == '__main__':
