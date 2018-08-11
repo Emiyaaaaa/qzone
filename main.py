@@ -7,6 +7,7 @@ from deal_zdx_txt import DealTxtImg
 
 max_page = 100
 
+
 def get_qzone_html():
 
     print('当前网络状态：',end='')
