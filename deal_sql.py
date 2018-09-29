@@ -57,8 +57,6 @@ class DealSql(object):
         return txt,img
 
 
-
-
     def up_sql(self,txt,img):
         pass
 

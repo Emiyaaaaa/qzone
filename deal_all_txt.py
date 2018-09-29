@@ -5,7 +5,7 @@
 import os
 import re
 import copy
-from deal_zdx_txt import DealTxtImg
+from .deal_zdx_txt import DealTxtImg
 
 class DealAll():
 
@@ -208,7 +208,7 @@ class DealAll():
 
 
     def deal_num(self,num_list):
-        # 数字列表处理,大小先后顺序，去重等
+        # 数字list处理,大小先后顺序，去重等
         num_ini = 0
         if num_list != [] and num_list != 0:
             # 有序去重
@@ -269,6 +269,7 @@ class DealAll():
 
         print(txt)
         print(txt_zdx)
+        print(img_num)
         print(txt_img_list)
         print()
         return txt_img_list
