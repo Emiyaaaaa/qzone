@@ -17,9 +17,10 @@ def get_qzone_html():
         pass
 
 
-def deal_txt():
+def main():
+    get_qzone_html()
     txt,img = DealSql().deal_html()
     txt_img_list = DealAll().main(txt, img)
 
-
-get_qzone_html()
+if __name__ == '__main__':
+    main()
