@@ -8,10 +8,7 @@ import time
 import re
 import pymysql
 import os
-
-executable_path = "chromedriver.exe" # headless-chrome路径
-qq = '486904330'
-max_info = 20 # 数据库新增内容数量上限,设为 0 时默认上限为 1000
+from config.config import *
 
 sql_new_time = []
 time_list = []
@@ -73,12 +70,12 @@ class GetQzoneToMysql(object):
             connect.close()
 
 
-    def get_qzone(self, max_info=max_info):
+    def get_qzone(self, max_info=MAX_INFO):
 
-        chromedriver = executable_path
+        chromedriver = EXECUTABLE_PATH
         os.environ["webdriver.chrome.driver"] = chromedriver
         driver = webdriver.Chrome(chromedriver)
-        driver.get('http://user.qzone.qq.com/{}/311'.format(qq))
+        driver.get('http://user.qzone.qq.com/{}/311'.format(QQ))
         time.sleep(6)
         try:
             driver.find_element_by_id('login_div')

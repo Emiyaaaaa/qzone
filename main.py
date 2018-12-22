@@ -22,4 +22,4 @@ def deal_txt():
     pass
 
 
-# get_qzone_html()
+get_qzone_html()
