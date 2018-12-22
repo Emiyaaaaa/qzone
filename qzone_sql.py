@@ -23,13 +23,13 @@ class GetQzoneToMysql(object):
     """
 
     def connect_mysql(self):
-
-        connect = pymysql.connect(host='127.0.0.1',
-                                  port=3306,
-                                  user='root',
-                                  password='1234',
-                                  charset='utf8mb4',
-                                  )
+        connect = pymysql.connect(
+            host=DATABASES['HOST'],
+            port=3306,
+            user=DATABASES['USER'],
+            password=DATABASES['PASSWORD'],
+            charset='utf8mb4',
+        )
         cursor = connect.cursor()
         cursor.execute('CREATE DATABASE IF NOT EXISTS qzone CHARACTER SET utf8mb4')
         cursor.execute('USE qzone')
@@ -125,7 +125,7 @@ class GetQzoneToMysql(object):
 
     def get_next_page(self,txt):
         reg = r'<a href="javascript:void[\s\S]+?;"[\s\S]+?" title="下一页" id="([\s\S]+?)" class="c_tx">'
-        next_page = re.findall(reg,txt)
+        next_page = re.findall(reg,txt)[0]
         print(next_page)
         return next_page
 
