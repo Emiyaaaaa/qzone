@@ -5,6 +5,7 @@
 import pymysql
 import re
 from deal_all_txt import DealAll
+from config.config import *
 
 maxinfo = 205 # 测试信息数量
 
@@ -12,12 +13,13 @@ maxinfo = 205 # 测试信息数量
 class DealSql(object):
 
     def down_sql(self):
-        connect = pymysql.connect(host='127.0.0.1',
-                                  port=3306,
-                                  user='root',
-                                  password='1234',
-                                  charset='utf8',
-                                  )
+        connect = pymysql.connect(
+            host=DATABASES['HOST'],
+            port=3306,
+            user=DATABASES['USER'],
+            password=DATABASES['PASSWORD'],
+            charset='utf8mb4',
+        )
         cursor = connect.cursor()
         cursor.execute('USE qzone')
 

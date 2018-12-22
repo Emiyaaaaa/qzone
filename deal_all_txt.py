@@ -5,7 +5,7 @@
 import os
 import re
 import copy
-from .deal_zdx_txt import DealTxtImg
+from deal_zdx_txt import DealTxtImg
 
 class DealAll():
 
