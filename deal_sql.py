@@ -285,7 +285,6 @@ class DealAll():
 
     def main(self,txt,img):
         # 结构[[[txt1],[img1]],[[txt2],[img2]]]
-
         # 获取self.deal_all()中的关键信息txt, img_num_list, img_num, txt_zdx, img_zdx
         tag_list = []
         img_num = len(img)
@@ -315,7 +314,6 @@ class DealAll():
                 else:
                     group_list.append(len(img_zdx))
                     for i in group_list[1:]:
-                        print(group_list)
                         txt_img_list.append([[','.join(self.list_flatten(txt_zdx[i_last:i]))],[','.join('%s' %id for id in self.list_flatten(img_zdx[i_last:i]))]])
                         i_last = i
         else:
@@ -325,7 +323,6 @@ class DealAll():
         print(txt_zdx)
         print(img_num)
         print(txt_img_list)
-        print()
         return txt_img_list
 
 
@@ -587,4 +584,4 @@ class DealTxtImg():
 
 
 if __name__ == '__main__':
-    DealSql().extract_html()
+    pass
