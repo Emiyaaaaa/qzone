@@ -29,7 +29,7 @@ class DealSql(object):
 
         cursor,connect = self.down_sql()
         cursor.execute('SELECT id FROM qzone_html')
-        html = ''
+        html_list = []
         id_all = cursor.fetchall()
         if id_all == ():
             print('请检查网络状态！')
@@ -39,22 +39,24 @@ class DealSql(object):
                 html = cursor.fetchall()[0][0]
                 if html == 'lhz':
                     continue
+                html_list.append(html)
                 cursor.execute('SELECT time FROM qzone_html WHERE id=' + str(id[0]))
                 time = cursor.fetchall()[0][0]
-        return html
+
+        return html_list
 
 
     def deal_html(self):
 
-        html = self.extract_html()
+        html_list = self.extract_html()
         text_all_re = r'a href="http://rc.qzone.qq.com/qzonesoso/\?search=[\s\S]+?" target="_blank">#([\s\S]+?)#</a>([\s\S]+?)<'  # 小技巧：最开头去掉 <
         text_re = r'<a href="http://rc.qzone.qq.com/qzonesoso/\?search=%E6%89%BE%E5%AF%B9%E8%B1%A1&amp;entry=99&amp;businesstype=mood" target="_blank">#找对象#</a>([\s\S]+?)<'
         img_re = r'<a href="(http://b\d+.photo.store.qq.com/psb\?/.*?|http://m.qpic.cn/psb\?/.*?)"[\s\S]+?title="查看大图"'
-
-        txt = re.findall(text_all_re,html)
-        img = re.findall(img_re,html)
-
-        return txt,img
+        for html in html_list:
+            txt = re.findall(text_all_re,html)
+            img = re.findall(img_re,html)
+            txt_img_list = DealAll().main(txt, img)
+            print(txt_img_list)
 
 
     def up_sql(self,txt,img):
@@ -319,10 +321,10 @@ class DealAll():
         else:
             txt_img_list.append([[','.join(self.list_flatten(txt_list))], [','.join('%s' % id for id in self.list_flatten(img_num_list))]])
 
-        print(txt)
-        print(txt_zdx)
-        print(img_num)
-        print(txt_img_list)
+        # print(txt)
+        # print(txt_zdx)
+        # print(img_num)
+        # print(txt_img_list)
         return txt_img_list
 
 
@@ -584,4 +586,4 @@ class DealTxtImg():
 
 
 if __name__ == '__main__':
-    pass
+    DealSql().deal_html()

@@ -18,8 +18,9 @@ def get_qzone_html():
 def main():
     # get_qzone_html()
     txt,img = DealSql().deal_html()
+    # print(txt,img)
     txt_img_list = DealAll().main(txt, img)
-    print(txt_img_list)
+    # print(txt_img_list)
 
 if __name__ == '__main__':
     main()
