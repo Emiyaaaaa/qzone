@@ -321,10 +321,6 @@ class DealAll():
         else:
             txt_img_list.append([[','.join(self.list_flatten(txt_list))], [','.join('%s' % id for id in self.list_flatten(img_num_list))]])
 
-        # print(txt)
-        # print(txt_zdx)
-        # print(img_num)
-        # print(txt_img_list)
         return txt_img_list
 
 
