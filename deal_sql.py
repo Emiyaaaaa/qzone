@@ -285,18 +285,18 @@ class DealAll():
         return num_list
 
     def img_num2img_url(self,txt_img_list,img):
-        # for list in txt_img_list:
-        #     img_num = list[1][0]
-        #     img_num = str(img_num).split(',')
-        #     try:
-        #         if img_num == '0':
-        #             list[1][0] = img
-        #         elif len(img_num) == 1:
-        #             list[1][0] = img[int(img_num[0]) - 1]
-        #         else:
-        #             list[1][0] = img[int(img_num[0])-1:int(img_num[1])-1]
-        #     except:
-        #         list[1][0] = img
+        for list in txt_img_list:
+            img_num = list[1][0]
+            img_num = str(img_num).split(',')
+            try:
+                if img_num == '0':
+                    list[1][0] = img
+                elif len(img_num) == 1:
+                    list[1][0] = img[int(img_num[0]) - 1]
+                else:
+                    list[1][0] = img[int(img_num[0])-1:int(img_num[1])-1]
+            except:
+                list[1][0] = img
         return txt_img_list
 
 
