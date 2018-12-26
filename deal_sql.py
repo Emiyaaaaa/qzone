@@ -284,11 +284,27 @@ class DealAll():
 
         return num_list
 
+    def img_num2img_url(self,txt_img_list,img):
+        # for list in txt_img_list:
+        #     img_num = list[1][0]
+        #     img_num = str(img_num).split(',')
+        #     try:
+        #         if img_num == '0':
+        #             list[1][0] = img
+        #         elif len(img_num) == 1:
+        #             list[1][0] = img[int(img_num[0]) - 1]
+        #         else:
+        #             list[1][0] = img[int(img_num[0])-1:int(img_num[1])-1]
+        #     except:
+        #         list[1][0] = img
+        return txt_img_list
+
 
     def main(self,txt,img):
         # 结构[[[txt1],[img1]],[[txt2],[img2]]]
         # 获取self.deal_all()中的关键信息txt, img_num_list, img_num, txt_zdx, img_zdx
         tag_list = []
+        txt_list = []
         img_num = len(img)
         for txt_ in txt:
             tag_list.append(txt_[0])
@@ -320,6 +336,8 @@ class DealAll():
                         i_last = i
         else:
             txt_img_list.append([[','.join(self.list_flatten(txt_list))], [','.join('%s' % id for id in self.list_flatten(img_num_list))]])
+
+        txt_img_list = self.img_num2img_url(txt_img_list,img)
 
         return txt_img_list
 
@@ -554,12 +572,14 @@ class DealTxtImg():
     def remove_txt(self,txt_one,remove_num):
         if remove_num == []:
             txt_one = txt_one
-        else:
-            txt_one = txt_one[:remove_num[0]]+txt_one[remove_num[-1]+1:]
+        # else:
+            # txt_one = txt_one[:remove_num[0]]+txt_one[remove_num[-1]+1:]
 
         txt_one = (re.sub('[:：]', '', txt_one)) # 删掉类似'图一：'之类多余的字符串
         txt_one = txt_one.strip(',.，。') # 删除左边逗号等字符
         txt_one = txt_one.strip() # 删除两边空字符
+        txt_one = txt_one.replace('\n','') # 好像没啥用啊
+        # print(txt_one,len(txt_one))
         return txt_one
 
 
