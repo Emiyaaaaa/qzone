@@ -5,8 +5,8 @@
 
 import pickle
 
-dict = {'password':'1234'}
-path = 'mysql.pwd'
+dict = {}
+path = 'QZone.pwd'
 
 with open(path, 'wb') as file:
     pickle.dump(dict,file)
@@ -14,4 +14,3 @@ with open(path, 'wb') as file:
 with open(path, 'rb') as file:
     dict = pickle.load(file)
 
-print(dict['password'])

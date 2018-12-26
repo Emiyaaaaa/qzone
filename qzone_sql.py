@@ -67,12 +67,15 @@ class GetQzoneToMysql(object):
             return 'ok'
         else:
             return 'exit'
-            connect.close()
+        connect.close()
 
 
     def get_qzone(self, max_info=MAX_INFO):
 
         chromedriver = EXECUTABLE_PATH
+        with open(os.path.join(BASE_DIR, 'config', 'QZone.pwd'), 'rb') as file:
+            dict = pickle.load(file)
+        QQPassword = dict['QQPassword']
         os.environ["webdriver.chrome.driver"] = chromedriver
         driver = webdriver.Chrome(chromedriver)
         driver.get('http://user.qzone.qq.com/{}/311'.format(QQ))
@@ -88,7 +91,7 @@ class GetQzoneToMysql(object):
             driver.find_element_by_id('u').clear()#选择用户名框
             driver.find_element_by_id('u').send_keys('2914034404')
             driver.find_element_by_id('p').clear()
-            driver.find_element_by_id('p').send_keys('2800520=lhz')
+            driver.find_element_by_id('p').send_keys(QQPassword)
             driver.find_element_by_id('login_button').click()
             time.sleep(4)
         driver.implicitly_wait(4)

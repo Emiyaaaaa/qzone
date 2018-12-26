@@ -10,7 +10,7 @@ import urllib.request
 from config.config import *
 
 
-class DealSql(object):
+class DealSql():
 
     def down_sql(self):
         connect = pymysql.connect(
@@ -56,10 +56,12 @@ class DealSql(object):
             txt = re.findall(text_all_re,html)
             img = re.findall(img_re,html)
             txt_img_list = DealAll().main(txt, img)
-            print(txt_img_list)
+            self.up_sql(txt_img_list)
 
 
-    def up_sql(self,txt,img):
+    def up_sql(self,txt_img_list):
+        print(txt_img_list)
+        cursor, connect = self.down_sql()
         pass
 
 

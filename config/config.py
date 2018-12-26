@@ -12,12 +12,12 @@ MAX_INFO = 20 # 数据库新增内容数量上限,设为 0 时默认上限为 10
 TEST_INFO = 205 # 测试信息数量
 
 
-with open(os.path.join(BASE_DIR, 'config','mysql.pwd'), 'rb') as file:
+with open(os.path.join(BASE_DIR, 'config','QZone.pwd'), 'rb') as file:
     dict = pickle.load(file)
 
 DATABASES = {
     'NAME': 'qzone',
     'USER': "root",
-    'PASSWORD': dict['password'],
+    'PASSWORD': dict['MySQLPassword'],
     'HOST': "60.205.207.236"
 }
