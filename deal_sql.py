@@ -35,7 +35,7 @@ class DealSql():
             print('请检查网络状态！')
         else:
             for id in id_all[:TEST_INFO]:
-                cursor.execute('SELECT html FROM qzone_html WHERE id=' + str(id[0]))
+                cursor.execute('SELECT html FROM qzone_html WHERE id=' + str(id[0]) + ' AND is_turned=0')
                 html = cursor.fetchall()[0][0]
                 if html == 'lhz':
                     continue

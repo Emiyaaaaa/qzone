@@ -33,7 +33,7 @@ class GetQzoneToMysql(object):
         cursor = connect.cursor()
         cursor.execute('CREATE DATABASE IF NOT EXISTS qzone CHARACTER SET utf8mb4')
         cursor.execute('USE qzone')
-        cursor.execute('CREATE TABLE IF NOT EXISTS qzone_html(html MEDIUMTEXT,time VARCHAR(30),upload_time VARCHAR(30), text TEXT,id SMALLINT UNSIGNED AUTO_INCREMENT PRIMARY KEY)')
+        cursor.execute('CREATE TABLE IF NOT EXISTS qzone_html(html LONGTEXT,time VARCHAR(50),upload_time VARCHAR(50), text TEXT,id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, is_turned SMALLINT default 0)')
 
         # 为数据表设一个初始值
         cursor.execute('SELECT id FROM qzone_html')
