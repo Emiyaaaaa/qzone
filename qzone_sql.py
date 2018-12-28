@@ -71,7 +71,7 @@ class GetQzoneToMysql(object):
 
 
     def get_qzone(self, max_info=MAX_INFO):
-
+        print(max_info)
         chromedriver = EXECUTABLE_PATH
         with open(os.path.join(BASE_DIR, 'config', 'QZone.pwd'), 'rb') as file:
             dict = pickle.load(file)
@@ -106,7 +106,7 @@ class GetQzoneToMysql(object):
             if max_info == 0:
                 max_info = 1000
             for i in range(max_info):
-
+                print(i)
                 info = self.get_time(driver.page_source)
 
                 if info == 'exit':
