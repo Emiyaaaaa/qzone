@@ -8,7 +8,7 @@ import time
 import re
 import pymysql
 import os
-from .config.config import *
+from extra_apps.qzone.config.config import *
 
 sql_new_time = []
 time_list = []

@@ -7,7 +7,7 @@ import re
 import copy
 import os
 import urllib.request
-from .config.config import *
+from extra_apps.qzone.config.config import *
 
 
 class DealSql():

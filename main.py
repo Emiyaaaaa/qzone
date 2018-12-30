@@ -3,8 +3,8 @@
 # @Time    : 2018/5/8 20:25
 import os
 import time
-from .qzone_sql import GetQzoneToMysql
-from .deal_sql import DealAll,DealSql
+from extra_apps.qzone.qzone_sql import GetQzoneToMysql
+from extra_apps.qzone.deal_sql import DealAll,DealSql
 
 max_page = 100
 
