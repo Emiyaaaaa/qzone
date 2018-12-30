@@ -178,5 +178,4 @@ class GetQzoneToMysql(object):
 
 
 if __name__ == '__main__':
-
     GetQzoneToMysql().get_qzone()
