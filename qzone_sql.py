@@ -133,7 +133,6 @@ class GetQzoneToMysql(object):
     def get_next_page(self,txt):
         reg = r'<a href="javascript:void[\s\S]+?;"[\s\S]+?" title="下一页" id="([\s\S]+?)" class="c_tx">'
         next_page = re.findall(reg,txt)[0]
-        print(next_page)
         return next_page
 
     def get_time(self,text):
@@ -153,7 +152,7 @@ class GetQzoneToMysql(object):
                     try:
                         info = self.up_mysql(str(li[i]),time_[0],upload_time)
                         if info == 'ok':
-                            print('succeed1')
+                            print('succeed')
                             time.sleep(1)
                     except BaseException as e:
                         print('failed')
