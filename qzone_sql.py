@@ -12,6 +12,7 @@ from extra_apps.qzone.config.config import *
 
 sql_new_time = []
 time_list = []
+auto_login = False
 
 class GetQzoneToMysql(object):
 
@@ -71,13 +72,10 @@ class GetQzoneToMysql(object):
 
 
     def get_qzone(self, max_info=MAX_INFO):
-        print(max_info)
-        chromedriver = EXECUTABLE_PATH
-        with open(os.path.join(BASE_DIR, 'config', 'QZone.pwd'), 'rb') as file:
-            dict = pickle.load(file)
-        QQPassword = dict['QQPassword']
-        os.environ["webdriver.chrome.driver"] = chromedriver
-        driver = webdriver.Chrome(chromedriver)
+        if 'driver' not in locals():
+            chromedriver = EXECUTABLE_PATH
+            os.environ["webdriver.chrome.driver"] = chromedriver
+            driver = webdriver.Chrome(chromedriver)
         driver.get('http://user.qzone.qq.com/{}/311'.format(QQ))
         time.sleep(6)
         try:
@@ -86,15 +84,22 @@ class GetQzoneToMysql(object):
         except:
             a = False
         if a == True:
-            driver.switch_to.frame('login_frame')
-            driver.find_element_by_id('switcher_plogin').click()
-            driver.find_element_by_id('u').clear()#选择用户名框
-            driver.find_element_by_id('u').send_keys('2914034404')
-            driver.find_element_by_id('p').clear()
-            driver.find_element_by_id('p').send_keys(QQPassword)
-            driver.find_element_by_id('login_button').click()
-            time.sleep(4)
-        driver.implicitly_wait(4)
+            if auto_login == True:
+                with open(os.path.join(BASE_DIR, 'config', 'QZone.pwd'), 'rb') as file:
+                    dict = pickle.load(file)
+                QQPassword = dict['QQPassword']
+                driver.switch_to.frame('login_frame')
+                driver.find_element_by_id('switcher_plogin').click()
+                driver.find_element_by_id('u').clear()#选择用户名框
+                driver.find_element_by_id('u').send_keys('2914034404')
+                driver.find_element_by_id('p').clear()
+                driver.find_element_by_id('p').send_keys(QQPassword)
+                driver.find_element_by_id('login_button').click()
+                time.sleep(4)
+                driver.implicitly_wait(4)
+            else:
+                time.sleep(20)
+                #手动扫码
         try:
             driver.find_element_by_id('QM_OwnerInfo_Icon')
             b = True
@@ -106,7 +111,6 @@ class GetQzoneToMysql(object):
             if max_info == 0:
                 max_info = 1000
             for i in range(max_info):
-                print(i)
                 info = self.get_time(driver.page_source)
 
                 if info == 'exit':
@@ -123,8 +127,8 @@ class GetQzoneToMysql(object):
                         continue
 
 
-        driver.close()
-        driver.quit()
+        # driver.close()
+        # driver.quit()
 
     def get_next_page(self,txt):
         reg = r'<a href="javascript:void[\s\S]+?;"[\s\S]+?" title="下一页" id="([\s\S]+?)" class="c_tx">'
