@@ -1,21 +1,24 @@
 # -*- coding: utf-8 -*-
 # @Author  : Li Haozheng
 # @Time    : 2018/5/8 20:25
-import os
 import time
+from selenium import webdriver
 from extra_apps.qzone.qzone_sql import GetQzoneToMysql
 from extra_apps.qzone.deal_sql import DealAll,DealSql
+from extra_apps.qzone.config.config import *
 
-max_page = 100
 
 def get_qzone_html():
+    chromedriver = EXECUTABLE_PATH
+    os.environ["webdriver.chrome.driver"] = chromedriver
+    driver = webdriver.Chrome(chromedriver)
     while True:
         if os.system('ping www.baidu.com') == 0:
-            GetQzoneToMysql().get_qzone(max_page)
+            GetQzoneToMysql().get_qzone(driver)
         else:
             time.sleep(20)
             continue
-        time.sleep(3600)
+        time.sleep(20)
 
 
 

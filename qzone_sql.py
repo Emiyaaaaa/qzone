@@ -3,7 +3,6 @@
 # @Time    : 2018/5/2 17:46
 
 from bs4 import BeautifulSoup
-from selenium import webdriver
 import time
 import re
 import pymysql
@@ -72,11 +71,8 @@ class GetQzoneToMysql(object):
         connect.close()
 
 
-    def get_qzone(self, max_info=MAX_INFO):
-        if 'driver' not in locals():
-            chromedriver = EXECUTABLE_PATH
-            os.environ["webdriver.chrome.driver"] = chromedriver
-            driver = webdriver.Chrome(chromedriver)
+    def get_qzone(self, driver,max_info=MAX_INFO):
+
         driver.get('http://user.qzone.qq.com/{}/311'.format(QQ))
         time.sleep(6)
         try:
@@ -99,7 +95,7 @@ class GetQzoneToMysql(object):
                 time.sleep(4)
                 driver.implicitly_wait(4)
             else:
-                time.sleep(20)
+                time.sleep(30)
                 #手动扫码
         try:
             driver.find_element_by_id('QM_OwnerInfo_Icon')
