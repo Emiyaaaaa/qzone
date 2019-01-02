@@ -18,7 +18,7 @@ def get_qzone_html():
         else:
             time.sleep(20)
             continue
-        time.sleep(3600)
+        time.sleep(1200)
 
 
 

@@ -10,6 +10,7 @@ path = 'QZone.pwd'
 
 with open(path, 'wb') as file:
     pickle.dump(dict,file)
+
 with open(path, 'rb') as file:
     dict = pickle.load(file)
 

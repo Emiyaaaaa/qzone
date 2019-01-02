@@ -35,13 +35,16 @@ class DealSql():
             print('请检查网络状态！')
         else:
             for id in id_all[:TEST_INFO]:
-                cursor.execute('SELECT html FROM qzone_html WHERE id=' + str(id[0]) + ' AND is_turned=0')
+                cursor.execute('SELECT html,time FROM qzone_html WHERE id=' + str(id[0]) + ' AND is_turned=0')
                 html = cursor.fetchall()[0][0]
+                time = cursor.fetchall()[0][1]
                 if html == 'lhz':
                     continue
-                html_list.append(html)
-                cursor.execute('SELECT time FROM qzone_html WHERE id=' + str(id[0]))
-                time = cursor.fetchall()[0][0]
+                html_list.append({
+                    'html':html,
+                    'id':id[0],
+                    'time':time
+                })
 
         return html_list
 
@@ -53,17 +56,22 @@ class DealSql():
         text_re = r'<a href="http://rc.qzone.qq.com/qzonesoso/\?search=%E6%89%BE%E5%AF%B9%E8%B1%A1&amp;entry=99&amp;businesstype=mood" target="_blank">#找对象#</a>([\s\S]+?)<'
         img_re = r'<a href="(http://b\d+.photo.store.qq.com/psb\?/.*?|http://m.qpic.cn/psb\?/.*?)"[\s\S]+?title="查看大图"'
         for html in html_list:
-            txt = re.findall(text_all_re,html)
-            img = re.findall(img_re,html)
+            txt = re.findall(text_all_re,html['html'])
+            img = re.findall(img_re,html['html'])
             txt_img_list = DealAll().main(txt, img)
-            self.up_sql(txt_img_list)
+            self.up_sql(txt_img_list,html)
 
 
-    def up_sql(self,txt_img_list):
+    def up_sql(self,txt_img_list,reason):
         print(txt_img_list)
         cursor, connect = self.down_sql()
-        pass
-
+        cursor.execute('CREATE TABLE IF NOT EXISTS qzone_reason(id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,text LONGTEXT,time VARCHAR(50),timestamp VARCHAR(50))')
+        time = reason['time']
+        timeArray = time.strptime(time, "%Y年%m月%d日 %H:%M")
+        time_stamp = time.mktime(timeArray)
+        sql = 'INSERT INTO qzone_reason (text,time,timestamp) VALUES (%s,%s,%s)'
+        cursor.execute(sql, (txt_img_list,time,time_stamp))
+        connect.commit()
 
 class DealAll():
     def list_flatten(self, l, a=None):

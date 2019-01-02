@@ -3,10 +3,11 @@
 # @Time    : 2018/5/2 17:46
 
 from bs4 import BeautifulSoup
+from selenium import webdriver
 import time
 import re
 import pymysql
-import os
+
 from extra_apps.qzone.config.config import *
 
 sql_new_time = []
@@ -48,14 +49,8 @@ class GetQzoneToMysql(object):
 
         cursor,connect = self.connect_mysql()
 
-
-        cursor.execute('SELECT id FROM qzone_html')
-        id_all = cursor.fetchall()
-        finally_id = id_all[len(id_all) - 1][0]
-        sql = 'SELECT upload_time FROM qzone_html WHERE id=' + str(finally_id)
-        cursor.execute(sql)
+        cursor.execute('SELECT upload_time FROM qzone_html ORDER BY id DESC')
         sql_new_time.append(cursor.fetchall()[0])
-
 
         timeArray = time.strptime(time_, "%Y年%m月%d日 %H:%M")
         time__ = time.mktime(timeArray)
@@ -164,14 +159,23 @@ class GetQzoneToMysql(object):
 
         return info
 
-    def new_time(self,time_,upload_time):
+    def new_time(self,time_stamp,upload_time):
 
         timeArray = time.strptime(upload_time, "%Y年%m月%d日 %H:%M")
-        upload_time_ = time.mktime(timeArray)
-        new_time = max(int(time_),int(upload_time_))
+        upload_time_stamp = time.mktime(timeArray)
+        new_time = max(int(time_stamp),int(upload_time_stamp))
 
         return new_time
 
 
 if __name__ == '__main__':
-    GetQzoneToMysql().get_qzone()
+    chromedriver = EXECUTABLE_PATH
+    os.environ["webdriver.chrome.driver"] = chromedriver
+    driver = webdriver.Chrome(chromedriver)
+    while True:
+        if os.system('ping www.baidu.com') == 0:
+            GetQzoneToMysql().get_qzone(driver)
+        else:
+            time.sleep(20)
+            continue
+        time.sleep(1200)
