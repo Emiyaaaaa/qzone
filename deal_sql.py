@@ -6,6 +6,7 @@ import pymysql
 import re
 import copy
 import os
+import time
 import urllib.request
 from extra_apps.qzone.config.config import *
 
@@ -28,23 +29,24 @@ class DealSql():
     def extract_html(self):
 
         cursor,connect = self.down_sql()
-        cursor.execute('SELECT id FROM qzone_html')
+        cursor.execute('SELECT id FROM qzone_html WHERE is_turned=0')
         html_list = []
         id_all = cursor.fetchall()
-        if id_all == ():
-            print('请检查网络状态！')
-        else:
-            for id in id_all[:TEST_INFO]:
-                cursor.execute('SELECT html,time FROM qzone_html WHERE id=' + str(id[0]) + ' AND is_turned=0')
-                html = cursor.fetchall()[0][0]
-                time = cursor.fetchall()[0][1]
-                if html == 'lhz':
-                    continue
-                html_list.append({
-                    'html':html,
-                    'id':id[0],
-                    'time':time
-                })
+
+        if TEST_INFO != 0:
+            id_all = id_all[:TEST_INFO]
+        for id in id_all:
+            cursor.execute('SELECT html,time FROM qzone_html WHERE id=' + str(id[0]))
+            f = cursor.fetchall()
+            html = f[0][0]
+            time = f[0][1]
+            if html == 'lhz':
+                continue
+            html_list.append({
+                'html':html,
+                'id':id[0],
+                'time':time
+            })
 
         return html_list
 
@@ -63,14 +65,14 @@ class DealSql():
 
 
     def up_sql(self,txt_img_list,reason):
-        print(txt_img_list)
         cursor, connect = self.down_sql()
         cursor.execute('CREATE TABLE IF NOT EXISTS qzone_reason(id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,text LONGTEXT,time VARCHAR(50),timestamp VARCHAR(50))')
-        time = reason['time']
-        timeArray = time.strptime(time, "%Y年%m月%d日 %H:%M")
+        my_time = reason['time']
+        timeArray = time.strptime(my_time, "%Y年%m月%d日 %H:%M")
         time_stamp = time.mktime(timeArray)
         sql = 'INSERT INTO qzone_reason (text,time,timestamp) VALUES (%s,%s,%s)'
-        cursor.execute(sql, (txt_img_list,time,time_stamp))
+        cursor.execute(sql, (str(txt_img_list), my_time, time_stamp))
+        cursor.execute('UPDATE qzone_html SET is_turned=1 WHERE id='+str(reason['id']))
         connect.commit()
 
 class DealAll():
@@ -582,8 +584,8 @@ class DealTxtImg():
     def remove_txt(self,txt_one,remove_num):
         if remove_num == []:
             txt_one = txt_one
-        # else:
-            # txt_one = txt_one[:remove_num[0]]+txt_one[remove_num[-1]+1:]
+        else:
+            txt_one = txt_one[:remove_num[0]]+txt_one[remove_num[-1]+1:]
 
         txt_one = (re.sub('[:：]', '', txt_one)) # 删掉类似'图一：'之类多余的字符串
         txt_one = txt_one.strip(',.，。') # 删除左边逗号等字符
