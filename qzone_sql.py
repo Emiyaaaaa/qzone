@@ -63,8 +63,6 @@ class GetQzoneToMysql(object):
             return 'ok'
         else:
             return 'exit'
-        connect.close()
-
 
     def get_qzone(self, driver,max_info=MAX_INFO):
 
@@ -145,14 +143,13 @@ class GetQzoneToMysql(object):
                         if info == 'ok':
                             print('succeed')
                             time.sleep(1)
+                        if info == 'exit':
+                            continue
                     except BaseException as e:
                         print('failed')
                         print(e)
                         time.sleep(1)
                         continue
-
-                    if info == 'exit':
-                        break
                 else:
                     print('time error!')
                     break
